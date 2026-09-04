@@ -7,7 +7,23 @@ class WorksheetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Worksheet')),
-      body: const Center(child: Text('Worksheet screen — coming soon')),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'My Worksheet',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text('Your worksheet content will appear here.'),
+          ],
+        ),
+      ),
     );
   }
 }
