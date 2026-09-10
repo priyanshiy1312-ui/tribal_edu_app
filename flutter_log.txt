@@ -1,0 +1,184 @@
+Resolving dependencies...
+Downloading packages...
+  code_assets 1.2.1 (2.0.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.0 available)
+  platform 3.1.6 (3.2.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  test_api 0.7.12 (0.7.14 available)
+  vector_math 2.4.0 (2.4.2 available)
+Got dependencies!
+9 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Launching lib\main.dart on Android SDK built for x86 64 in debug mode...
+Running Gradle task 'assembleDebug'...                          
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/C:/Users/khand/.gradle/wrapper/dists/gradle-9.3.1-all/9ot9r568e8zfvvd4mn8rbu1j0/gradle-9.3.1/lib/native-platform-0.22-milestone-29.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+Running Gradle task 'assembleDebug'...                              3.7s
+√ Built build\app\outputs\flutter-apk\app-debug.apk
+Installing build\app\outputs\flutter-apk\app-debug.apk...        1,933ms
+I/FlutterActivityAndFragmentDelegate(23243): If you are attempting to set --enable-dart-profiling via Intent extras to launch a Flutter component outside of using the Flutter CLI, note that support for setting engine flags on Android via Intent will soon be dropped; see https://github.com/flutter/flutter/issues/180686 for more information on this breaking change. To migrate, set --enable-dart-profiling or any other flags specified via Intent extras on the command line instead or see https://github.com/flutter/flutter/blob/main/docs/engine/Flutter-Android-Engine-Flags.md for alternative methods.
+D/FlutterJNI(23243): Beginning load of flutter...
+D/FlutterJNI(23243): flutter (null) was loaded normally!
+I/flutter (23243): [IMPORTANT:flutter/shell/common/shell.cc(528)] [Action Required]: Impeller opt-out deprecated.
+I/flutter (23243):     The application opted out of Impeller by either using the
+I/flutter (23243):     `--no-enable-impeller` flag or the
+I/flutter (23243):     `io.flutter.embedding.android.EnableImpeller` `AndroidManifest.xml` entry.
+I/flutter (23243):     These options are going to go away in an upcoming Flutter release. Remove
+I/flutter (23243):     the explicit opt-out. If you need to opt-out, please report a bug describing
+I/flutter (23243):     the issue.
+I/flutter (23243): 
+I/flutter (23243):     https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+I/flutter (23243): 
+D/FlutterRenderer(23243): Width is zero. 0,0
+Syncing files to device Android SDK built for x86 64...             91ms
+
+Flutter run key commands.
+r Hot reload. 
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+A Dart VM Service on Android SDK built for x86 64 is available at: http://127.0.0.1:59518/seuocy7m77g=/
+The Flutter DevTools debugger and profiler on Android SDK built for x86 64 is available at: http://127.0.0.1:59518/seuocy7m77g=/devtools/?uri=ws://127.0.0.1:59518/seuocy7m77g=/ws
+I/Choreographer(23243): Skipped 135 frames!  The application may be doing too much work on its main thread.
+I/.tribal_edu_ap(23243): Rejecting re-init on previously-failed class java.lang.Class<androidx.window.layout.adapter.sidecar.DistinctElementSidecarCallback>: java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/window/sidecar/SidecarInterface$SidecarCallback;
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/.tribal_edu_ap(23243):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:547)
+I/.tribal_edu_ap(23243):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:568)
+I/.tribal_edu_ap(23243):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/chatty  (23243): uid=10085(com.example.tribal_edu_app) identical 1 line
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/.tribal_edu_ap(23243):   at void android.os.Looper.loop() (Looper.java:193)
+I/.tribal_edu_ap(23243):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+I/.tribal_edu_ap(23243):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+I/.tribal_edu_ap(23243): Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.window.sidecar.SidecarInterface$SidecarCallback" on path: DexPathList[[zip file "/data/app/com.example.tribal_edu_app-xYWCYJfWM8pwDm7srBPqwA==/base.apk"],nativeLibraryDirectories=[/data/app/com.example.tribal_edu_app-xYWCYJfWM8pwDm7srBPqwA==/lib/x86_64, /data/app/com.example.tribal_edu_app-xYWCYJfWM8pwDm7srBPqwA==/base.apk!/lib/x86_64, /system/lib64]]
+I/.tribal_edu_ap(23243):   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+I/.tribal_edu_ap(23243):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+I/.tribal_edu_ap(23243):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/.tribal_edu_ap(23243):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:547)
+I/.tribal_edu_ap(23243):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:568)
+I/.tribal_edu_ap(23243):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/chatty  (23243): uid=10085(com.example.tribal_edu_app) identical 1 line
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/.tribal_edu_ap(23243):   at void android.os.Looper.loop() (Looper.java:193)
+I/.tribal_edu_ap(23243):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+I/.tribal_edu_ap(23243):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+I/.tribal_edu_ap(23243): 
+I/.tribal_edu_ap(23243): Rejecting re-init on previously-failed class java.lang.Class<androidx.window.layout.adapter.sidecar.DistinctElementSidecarCallback>: java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/window/sidecar/SidecarInterface$SidecarCallback;
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/.tribal_edu_ap(23243):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:547)
+I/.tribal_edu_ap(23243):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:568)
+I/.tribal_edu_ap(23243):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/chatty  (23243): uid=10085(com.example.tribal_edu_app) identical 1 line
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/.tribal_edu_ap(23243):   at void android.os.Looper.loop() (Looper.java:193)
+I/.tribal_edu_ap(23243):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+I/.tribal_edu_ap(23243):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+I/.tribal_edu_ap(23243): Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.window.sidecar.SidecarInterface$SidecarCallback" on path: DexPathList[[zip file "/data/app/com.example.tribal_edu_app-xYWCYJfWM8pwDm7srBPqwA==/base.apk"],nativeLibraryDirectories=[/data/app/com.example.tribal_edu_app-xYWCYJfWM8pwDm7srBPqwA==/lib/x86_64, /data/app/com.example.tribal_edu_app-xYWCYJfWM8pwDm7srBPqwA==/base.apk!/lib/x86_64, /system/lib64]]
+I/.tribal_edu_ap(23243):   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+I/.tribal_edu_ap(23243):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+I/.tribal_edu_ap(23243):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/.tribal_edu_ap(23243):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/.tribal_edu_ap(23243):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:547)
+I/.tribal_edu_ap(23243):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:568)
+I/.tribal_edu_ap(23243):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/chatty  (23243): uid=10085(com.example.tribal_edu_app) identical 1 line
+I/.tribal_edu_ap(23243):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+I/.tribal_edu_ap(23243):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+I/.tribal_edu_ap(23243):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/.tribal_edu_ap(23243):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/.tribal_edu_ap(23243):   at void android.os.Looper.loop() (Looper.java:193)
+I/.tribal_edu_ap(23243):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+I/.tribal_edu_ap(23243):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+I/.tribal_edu_ap(23243):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+I/.tribal_edu_ap(23243): 
+D/FlutterRenderer(23243): Width is zero. 0,0
+I/OpenGLRenderer(23243): Initialized EGL, version 1.4
+D/OpenGLRenderer(23243): Swap behavior 1
+D/        (23243): HostConnection::get() New Host Connection established 0x78c39a83f7e0, tid 23275
+W/OpenGLRenderer(23243): Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+D/OpenGLRenderer(23243): Swap behavior 0
+D/FlutterJNI(23243): Sending viewport metrics to the engine.
+D/EGL_emulation(23243): eglCreateContext: 0x78c39a86cee0: maj 2 min 0 rcv 2
+D/EGL_emulation(23243): eglMakeCurrent: 0x78c39a86cee0: ver 2 0 (tinfo 0x78c39a8de800)
+D/        (23243): HostConnection::get() New Host Connection established 0x78c39a83f600, tid 23265
+D/EGL_emulation(23243): eglMakeCurrent: 0x78c398ee2660: ver 2 0 (tinfo 0x78c38bdfe3a0)
+D/EGL_emulation(23243): eglCreateContext: 0x78c398ee2840: maj 2 min 0 rcv 2
+D/EGL_emulation(23243): eglMakeCurrent: 0x78c398ee2840: ver 2 0 (tinfo 0x78c38bdfe3a0)
+D/EGL_emulation(23243): eglMakeCurrent: 0x78c398ee2660: ver 2 0 (tinfo 0x78c38bdfe3a0)
+D/EGL_emulation(23243): eglMakeCurrent: 0x78c398ee2660: ver 2 0 (tinfo 0x78c38bdfe3a0)
+W/.tribal_edu_ap(23243): Accessing hidden method Landroid/os/Trace;->asyncTraceEnd(JLjava/lang/String;I)V (light greylist, reflection)
+D/FlutterJNI(23243): Sending viewport metrics to the engine.
+D/FlutterJNI(23243): Sending viewport metrics to the engine.
+D/EGL_emulation(23243): eglMakeCurrent: 0x78c39a86cee0: ver 2 0 (tinfo 0x78c39a8de800)
+D/ProfileInstaller(23243): Installing profile for com.example.tribal_edu_app
+
+
+
+
+I/Choreographer(23243): Skipped 40 frames!  The application may be doing too much work on its main thread.

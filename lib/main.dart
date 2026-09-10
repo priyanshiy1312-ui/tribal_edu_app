@@ -2,11 +2,20 @@ import 'package:flutter/material.dart';
 import 'screens/translate_screen.dart';
 import 'screens/worksheet_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'services/database_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    final count = await DatabaseService.instance.loadPhrasesFromCsv();
+    debugPrint('✅ Loaded $count phrases into database');
+  } catch (e) {
+    debugPrint('❌ Failed to load phrases: $e');
+  }
+
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
