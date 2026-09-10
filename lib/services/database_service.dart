@@ -45,8 +45,8 @@ class DatabaseService {
       'assets/data/phrases.csv',
       cache: false,
     );
-print('Raw CSV newline count: ${'\n'.allMatches(rawCsv).length}');
-    final rows =  CsvToListConverter(eol: '\n').convert(rawCsv);
+
+    final rows = CsvToListConverter(eol: '\n').convert(rawCsv);
 
     if (rows.isEmpty) {
       throw Exception('phrases.csv appears to be empty.');
@@ -67,21 +67,14 @@ print('Raw CSV newline count: ${'\n'.allMatches(rawCsv).length}');
       );
     }
 
-        final batch = db.batch();
+    final batch = db.batch();
     batch.delete('phrases');
 
-    print('Total rows in CSV (excluding header): ${dataRows.length}');
-
     for (final row in dataRows) {
-      if (row.length < 3) {
-        print('SKIPPED - too few columns: $row');
-        continue;
-      }
+      if (row.length < 3) continue;
       final idRaw = row[idIdx].toString().trim();
-      if (idRaw.isEmpty) {
-        print('SKIPPED - empty id: $row');
-        continue;
-      }
+      if (idRaw.isEmpty) continue;
+
       final phrase = Phrase(
         id: int.parse(idRaw),
         hindiPhrase: row[hindiIdx].toString().trim(),
