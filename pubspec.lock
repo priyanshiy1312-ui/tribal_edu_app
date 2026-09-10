@@ -192,6 +192,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_whisper_ggml:
+    dependency: "direct main"
+    description:
+      name: flutter_whisper_ggml
+      sha256: a37a1f51f6617d0beae9ce907a25c361f782cfe76d56e9c8001257a3091d2b57
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   hooks:
     dependency: transitive
     description:

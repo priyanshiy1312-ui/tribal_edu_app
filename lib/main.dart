@@ -3,9 +3,14 @@ import 'screens/translate_screen.dart';
 import 'screens/worksheet_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/database_service.dart';
-
+import 'services/speech_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    try {
+    await SpeechService.instance.loadModel();
+  } catch (e) {
+    debugPrint('❌ Failed to load Whisper model: $e');
+  }
 
   try {
     final count = await DatabaseService.instance.loadPhrasesFromCsv();
