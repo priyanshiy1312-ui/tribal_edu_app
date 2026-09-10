@@ -1,38 +1,41 @@
-import 'package:flutter_whisper_ggml/flutter_whisper_ggml.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_whisper_ggml/flutter_whisper.dart';
 
 class SpeechService {
   SpeechService._internal();
   static final SpeechService instance = SpeechService._internal();
 
-  WhisperController? _controller;
+  FlutterWhisper? _whisper;
   bool _isModelLoaded = false;
-
   bool get isModelLoaded => _isModelLoaded;
 
   Future<void> loadModel() async {
     if (_isModelLoaded) return;
 
-    _controller = WhisperController();
-
-    // Downloads (first run only) and loads the 'base' model —
-    // the same one we validated on the laptop with real Hindi speech.
-    await _controller!.downloadModel(WhisperModel.base);
+    _whisper = await FlutterWhisper.loadModel(
+      model: WhisperModels.base,
+      onDownloadProgress: (progress) {
+        debugPrint('Whisper model download progress: $progress');
+      },
+      onModelProgress: (progress) {
+        debugPrint('Whisper model loading: $progress%');
+      },
+    );
 
     _isModelLoaded = true;
-    print('✅ Whisper base model loaded and ready');
+    debugPrint('✅ Whisper base model loaded and ready');
   }
 
   Future<String> transcribeFile(String audioFilePath) async {
-    if (!_isModelLoaded || _controller == null) {
+    if (!_isModelLoaded || _whisper == null) {
       throw Exception('Whisper model is not loaded yet. Call loadModel() first.');
     }
 
-    final result = await _controller!.transcribe(
-      model: WhisperModel.base,
-      audioPath: audioFilePath,
-      lang: 'hi', // Hindi
+    final result = await _whisper!.transcribeFile(
+      audioFilePath,
+      config: const WhisperTranscribeConfig(language: 'hi'),
     );
 
-    return result?.transcription.text.trim() ?? '';
+    return result.text.trim();
   }
 }
