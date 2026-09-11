@@ -71,9 +71,9 @@ class DatabaseService {
     batch.delete('phrases');
 
     for (final row in dataRows) {
-      if (row.length < 3) continue; // skip blank rows
+      if (row.length < 3) continue;
       final idRaw = row[idIdx].toString().trim();
-      if (idRaw.isEmpty) continue; // skip trailing blank rows from Excel
+      if (idRaw.isEmpty) continue;
 
       final phrase = Phrase(
         id: int.parse(idRaw),
