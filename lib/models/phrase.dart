@@ -1,6 +1,7 @@
 class Phrase {
   final int id;
   final String hindiPhrase;
+  final String hindiRomanized;
   final String santaliPhrase;
   final String category;
   final String notes;
@@ -8,6 +9,7 @@ class Phrase {
   Phrase({
     required this.id,
     required this.hindiPhrase,
+    required this.hindiRomanized,
     required this.santaliPhrase,
     required this.category,
     required this.notes,
@@ -17,6 +19,7 @@ class Phrase {
     return {
       'id': id,
       'hindi_phrase': hindiPhrase,
+      'hindi_romanized': hindiRomanized,
       'santali_phrase': santaliPhrase,
       'category': category,
       'notes': notes,
@@ -27,6 +30,7 @@ class Phrase {
     return Phrase(
       id: map['id'] as int,
       hindiPhrase: map['hindi_phrase'] as String,
+      hindiRomanized: map['hindi_romanized'] as String? ?? '',
       santaliPhrase: map['santali_phrase'] as String,
       category: map['category'] as String? ?? '',
       notes: map['notes'] as String? ?? '',
@@ -35,6 +39,6 @@ class Phrase {
 
   @override
   String toString() {
-    return 'Phrase(id: $id, hindi: $hindiPhrase, santali: $santaliPhrase, category: $category)';
+    return 'Phrase(id: $id, hindi: $hindiPhrase, romanized: $hindiRomanized, santali: $santaliPhrase, category: $category)';
   }
 }

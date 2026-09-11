@@ -29,6 +29,7 @@ class DatabaseService {
           CREATE TABLE phrases (
             id INTEGER PRIMARY KEY,
             hindi_phrase TEXT NOT NULL,
+            hindi_romanized TEXT NOT NULL,
             santali_phrase TEXT NOT NULL,
             category TEXT,
             notes TEXT
@@ -57,11 +58,12 @@ class DatabaseService {
 
     final idIdx = header.indexOf('id');
     final hindiIdx = header.indexOf('hindi_phrase');
+    final hindiRomanizedIdx = header.indexOf('hindi_romanized');
     final santaliIdx = header.indexOf('santali_phrase');
     final categoryIdx = header.indexOf('category');
     final notesIdx = header.indexOf('notes');
 
-    if (idIdx == -1 || hindiIdx == -1 || santaliIdx == -1) {
+    if (idIdx == -1 || hindiIdx == -1 || hindiRomanizedIdx == -1 || santaliIdx == -1) {
       throw Exception(
         'phrases.csv header is missing required columns. Found header: $header',
       );
@@ -78,6 +80,7 @@ class DatabaseService {
       final phrase = Phrase(
         id: int.parse(idRaw),
         hindiPhrase: row[hindiIdx].toString().trim(),
+        hindiRomanized: row[hindiRomanizedIdx].toString().trim(),
         santaliPhrase: row[santaliIdx].toString().trim(),
         category: categoryIdx != -1 ? row[categoryIdx].toString().trim() : '',
         notes: notesIdx != -1 ? row[notesIdx].toString().trim() : '',
