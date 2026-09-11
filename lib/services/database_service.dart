@@ -23,20 +23,44 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE phrases (
-            id INTEGER PRIMARY KEY,
-            hindi_phrase TEXT NOT NULL,
-            hindi_romanized TEXT NOT NULL,
-            santali_phrase TEXT NOT NULL,
-            category TEXT,
-            notes TEXT
-          )
-        ''');
+        await _createPhrasesTable(db);
+        await _createMatchLogsTable(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await _createMatchLogsTable(db);
+        }
       },
     );
+  }
+
+  Future<void> _createPhrasesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE phrases (
+        id INTEGER PRIMARY KEY,
+        hindi_phrase TEXT NOT NULL,
+        hindi_romanized TEXT NOT NULL,
+        santali_phrase TEXT NOT NULL,
+        category TEXT,
+        notes TEXT
+      )
+    ''');
+  }
+
+  Future<void> _createMatchLogsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS match_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recognized_text TEXT NOT NULL,
+        matched_phrase_id INTEGER,
+        matched_santali TEXT,
+        score REAL NOT NULL,
+        is_match INTEGER NOT NULL,
+        timestamp TEXT NOT NULL
+      )
+    ''');
   }
 
   Future<int> loadPhrasesFromCsv() async {
@@ -105,5 +129,30 @@ class DatabaseService {
     final db = await database;
     final maps = await db.query('phrases');
     return maps.map((m) => Phrase.fromMap(m)).toList();
+  }
+
+  /// Logs one matching attempt (success OR near-miss) for the dashboard.
+  Future<void> logMatchAttempt({
+    required String recognizedText,
+    int? matchedPhraseId,
+    String? matchedSantali,
+    required double score,
+    required bool isMatch,
+  }) async {
+    final db = await database;
+    await db.insert('match_logs', {
+      'recognized_text': recognizedText,
+      'matched_phrase_id': matchedPhraseId,
+      'matched_santali': matchedSantali,
+      'score': score,
+      'is_match': isMatch ? 1 : 0,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+  }
+
+  /// Returns all logged match attempts, most recent first.
+  Future<List<Map<String, dynamic>>> getMatchLogs() async {
+    final db = await database;
+    return db.query('match_logs', orderBy: 'id DESC');
   }
 }

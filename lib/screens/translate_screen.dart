@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '../services/speech_service.dart';
 import '../services/phrase_matcher_service.dart';
+import '../services/database_service.dart';
+import '../services/audio_service.dart';
 
 enum RecordingState { idle, recording, processing }
 
@@ -155,19 +157,30 @@ debugPrint('📁 File exists: $exists, size: $size bytes');
       final text = await SpeechService.instance.transcribeFile(path);
       debugPrint('🗣️ Recognized text: "$text"');
 
-      final match = await PhraseMatcherService.instance.findBestMatch(text);
+      final result = await PhraseMatcherService.instance.evaluateMatch(text);
+
+      await DatabaseService.instance.logMatchAttempt(
+        recognizedText: text,
+        matchedPhraseId: result?.phrase.id,
+        matchedSantali: result?.phrase.santaliPhrase,
+        score: result?.score ?? 0.0,
+        isMatch: result?.isMatch ?? false,
+      );
+
+      final matched = (result != null && result.isMatch) ? result.phrase : null;
 
       setState(() {
         _recognizedText = text;
-        _matchedSantali = match?.santaliPhrase;
-        _errorMessage = match == null ? 'No matching phrase found.' : null;
+        _matchedSantali = matched?.santaliPhrase;
+        _errorMessage = matched == null ? 'No matching phrase found.' : null;
         _state = RecordingState.idle;
       });
 
-      if (match != null) {
-        debugPrint('✅ Matched phrase -> Santali: "${match.santaliPhrase}"');
+      if (matched != null) {
+        debugPrint('✅ Matched phrase -> Santali: "${matched.santaliPhrase}" (score: ${result!.score.toStringAsFixed(2)})');
+        await AudioService.instance.playSantaliAudio(matched);
       } else {
-        debugPrint('❌ No confident match found for: "$text"');
+        debugPrint('❌ No confident match for: "$text" (best score: ${result?.score.toStringAsFixed(2) ?? "n/a"})');
       }
     } catch (e) {
       debugPrint('❌ Pipeline error: $e');

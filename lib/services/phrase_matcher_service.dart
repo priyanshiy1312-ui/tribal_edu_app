@@ -58,6 +58,44 @@ class PhraseMatcherService {
     return MatchResult(phrase: bestPhrase, score: bestScore);
   }
 
+  /// Like [findBestMatchWithScore], but NEVER returns null (except when
+  /// the phrase table itself is empty). Always returns the best-scoring
+  /// phrase and its score, even if it's below the match threshold —
+  /// so every attempt (success or near-miss) can be logged for the
+  /// dashboard. Use `.isMatch` to check whether it actually cleared
+  /// the threshold.
+  Future<MatchResult?> evaluateMatch(
+    String hindiInput, {
+    double threshold = defaultThreshold,
+  }) async {
+    final cleanedInput = _normalize(hindiInput);
+    if (cleanedInput.isEmpty) return null;
+
+    final allPhrases = await DatabaseService.instance.getAllPhrases();
+    if (allPhrases.isEmpty) return null;
+
+    Phrase? bestPhrase;
+    double bestScore = 0.0;
+
+    for (final phrase in allPhrases) {
+      final candidate = _normalize(phrase.hindiRomanized);
+      final score = StringSimilarity.compareTwoStrings(cleanedInput, candidate);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestPhrase = phrase;
+      }
+    }
+
+    if (bestPhrase == null) return null;
+
+    return MatchResult(
+      phrase: bestPhrase,
+      score: bestScore,
+      isMatch: bestScore >= threshold,
+    );
+  }
+
   /// Basic normalization so trivial differences (extra spaces, stray
   /// punctuation, casing) don't tank the score.
   String _normalize(String input) {
@@ -73,10 +111,11 @@ class PhraseMatcherService {
 class MatchResult {
   final Phrase phrase;
   final double score;
+  final bool isMatch;
 
-  MatchResult({required this.phrase, required this.score});
+  MatchResult({required this.phrase, required this.score, this.isMatch = true});
 
   @override
   String toString() =>
-      'MatchResult(phrase: "${phrase.hindiPhrase}", score: ${score.toStringAsFixed(2)})';
+      'MatchResult(phrase: "${phrase.hindiPhrase}", score: ${score.toStringAsFixed(2)}, isMatch: $isMatch)';
 }
