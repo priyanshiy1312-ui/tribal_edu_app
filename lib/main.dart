@@ -4,6 +4,7 @@ import 'screens/worksheet_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/database_service.dart';
 import 'services/speech_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
     try {
@@ -18,7 +19,7 @@ void main() async {
   } catch (e) {
     debugPrint('❌ Failed to load phrases: $e');
   }
-
+ 
   runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
