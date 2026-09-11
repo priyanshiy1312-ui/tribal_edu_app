@@ -1,20 +1,16 @@
-import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../models/phrase.dart';
 
 /// Plays the cached Santali audio for a matched phrase.
 ///
-/// Audio files are expected to live in the app's local documents
-/// folder, at:
-///   <documents>/santali_audio/<phrase.id>.mp3
+/// Audio files are bundled directly as Flutter assets at:
+///   assets/audio/<phrase.id>.aac
 ///
-/// This is a STUB until Day 2's real audio files exist. Right now it
-/// checks whether the file is there; if not, it logs what *would* have
-/// played instead of crashing. Once real files are dropped into that
-/// folder (no rebuild needed), playback starts working automatically —
-/// no code changes required here.
+/// Only a subset of the 56 phrases have real audio recorded so far
+/// (Day 2 is still in progress). For any phrase without a file yet,
+/// this fails gracefully and just logs it — no crash — so the app
+/// keeps working end-to-end even with partial audio coverage.
 class AudioService {
   AudioService._internal();
   static final AudioService instance = AudioService._internal();
@@ -22,31 +18,20 @@ class AudioService {
   final AudioPlayer _player = AudioPlayer();
 
   Future<void> playSantaliAudio(Phrase phrase) async {
-    final path = await _audioPathFor(phrase.id);
-    final file = File(path);
-
-    if (!await file.exists()) {
-      // ignore: avoid_print
-      print(
-        '🔇 [STUB] Would play Santali audio for phrase ${phrase.id} '
-        '("${phrase.santaliPhrase}") — file not found at: $path',
-      );
-      return;
-    }
+    final assetPath = 'audio/${phrase.id}.aac';
 
     try {
-      await _player.play(DeviceFileSource(path));
+      await _player.play(AssetSource(assetPath));
       // ignore: avoid_print
-      print('🔊 Playing Santali audio for phrase ${phrase.id}: $path');
+      print('🔊 Playing Santali audio for phrase ${phrase.id}: $assetPath');
     } catch (e) {
       // ignore: avoid_print
-      print('❌ Failed to play audio for phrase ${phrase.id}: $e');
+      print(
+        '🔇 No audio available yet for phrase ${phrase.id} '
+        '("${phrase.santaliPhrase}") — Day 2 hasn\'t recorded this one. '
+        'Error: $e',
+      );
     }
-  }
-
-  Future<String> _audioPathFor(int phraseId) async {
-    final dir = await getApplicationDocumentsDirectory();
-    return '${dir.path}/santali_audio/$phraseId.mp3';
   }
 
   void dispose() {
