@@ -9,6 +9,14 @@ import 'database_service.dart';
 ///
 /// This is NOT open-ended translation — it only ever matches against
 /// the fixed list of phrases already sitting in the `phrases` table.
+///
+/// IMPORTANT FIX: raw fuzzy-string scores are unreliable for very
+/// short phrases (e.g. "do" = "two") — a 2-letter candidate can score
+/// deceptively high against almost any input just by chance overlap,
+/// causing short phrases to "win" matches they have no real business
+/// winning. We correct for this with a length-ratio penalty: the more
+/// the matched phrase's length differs from the spoken input's length,
+/// the more its score gets shrunk.
 class PhraseMatcherService {
   PhraseMatcherService._internal();
   static final PhraseMatcherService instance = PhraseMatcherService._internal();
@@ -16,54 +24,28 @@ class PhraseMatcherService {
   /// Minimum similarity score (0.0–1.0) required to count as a match.
   static const double defaultThreshold = 0.45;
 
-  /// Finds the best-matching [Phrase] for the given input.
-  /// Returns `null` if nothing scores high enough (i.e. "no match").
   Future<Phrase?> findBestMatch(
     String hindiInput, {
     double threshold = defaultThreshold,
   }) async {
-    final result = await findBestMatchWithScore(hindiInput, threshold: threshold);
-    return result?.phrase;
+    final result = await evaluateMatch(hindiInput, threshold: threshold);
+    return (result != null && result.isMatch) ? result.phrase : null;
   }
 
-  /// Same as [findBestMatch] but also returns the similarity score,
-  /// useful for debugging / tuning the threshold while testing.
   Future<MatchResult?> findBestMatchWithScore(
     String hindiInput, {
     double threshold = defaultThreshold,
   }) async {
-    final cleanedInput = _normalize(hindiInput);
-    if (cleanedInput.isEmpty) return null;
-
-    final allPhrases = await DatabaseService.instance.getAllPhrases();
-    if (allPhrases.isEmpty) return null;
-
-    Phrase? bestPhrase;
-    double bestScore = 0.0;
-
-    for (final phrase in allPhrases) {
-      final candidate = _normalize(phrase.hindiRomanized);
-      final score = StringSimilarity.compareTwoStrings(cleanedInput, candidate);
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestPhrase = phrase;
-      }
-    }
-
-    if (bestPhrase == null || bestScore < threshold) {
-      return null;
-    }
-
-    return MatchResult(phrase: bestPhrase, score: bestScore);
+    final result = await evaluateMatch(hindiInput, threshold: threshold);
+    if (result == null || !result.isMatch) return null;
+    return result;
   }
 
-  /// Like [findBestMatchWithScore], but NEVER returns null (except when
-  /// the phrase table itself is empty). Always returns the best-scoring
-  /// phrase and its score, even if it's below the match threshold —
-  /// so every attempt (success or near-miss) can be logged for the
-  /// dashboard. Use `.isMatch` to check whether it actually cleared
-  /// the threshold.
+  /// Core matching logic. Always returns the best-scoring phrase and
+  /// its (length-adjusted) score, even if it's below the match
+  /// threshold — check `.isMatch` to see whether it actually cleared
+  /// the bar. Returns null only if there's genuinely nothing to
+  /// compare against (empty input or empty phrase table).
   Future<MatchResult?> evaluateMatch(
     String hindiInput, {
     double threshold = defaultThreshold,
@@ -79,10 +61,13 @@ class PhraseMatcherService {
 
     for (final phrase in allPhrases) {
       final candidate = _normalize(phrase.hindiRomanized);
-      final score = StringSimilarity.compareTwoStrings(cleanedInput, candidate);
+      if (candidate.isEmpty) continue;
 
-      if (score > bestScore) {
-        bestScore = score;
+      final rawScore = StringSimilarity.compareTwoStrings(cleanedInput, candidate);
+      final adjustedScore = rawScore * _lengthRatio(cleanedInput, candidate);
+
+      if (adjustedScore > bestScore) {
+        bestScore = adjustedScore;
         bestPhrase = phrase;
       }
     }
@@ -94,6 +79,17 @@ class PhraseMatcherService {
       score: bestScore,
       isMatch: bestScore >= threshold,
     );
+  }
+
+  /// Penalizes matches between very differently-sized strings.
+  /// Same length -> 1.0 (no penalty). A 2-letter word compared
+  /// against a 15-letter sentence -> a small fraction, dragging its
+  /// score down hard even if raw fuzzy similarity looked high.
+  double _lengthRatio(String a, String b) {
+    if (a.isEmpty || b.isEmpty) return 0.0;
+    final shorter = a.length < b.length ? a.length : b.length;
+    final longer = a.length > b.length ? a.length : b.length;
+    return shorter / longer;
   }
 
   /// Basic normalization so trivial differences (extra spaces, stray
