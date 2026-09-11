@@ -13,7 +13,7 @@ class SpeechService {
     if (_isModelLoaded) return;
 
     _whisper = await FlutterWhisper.loadModel(
-      model: WhisperModels.base,
+  model: WhisperModels.tinyQ5_1,
       config: const WhisperModelConfig(useGpu: false),
       onDownloadProgress: (progress) {
         print('Whisper model download: $progress');
@@ -34,7 +34,10 @@ class SpeechService {
 
     final result = await _whisper!.transcribeFile(
       audioFilePath,
-      config: const WhisperTranscribeConfig(language: 'hi'),
+      config: const WhisperTranscribeConfig(
+        language: 'hi',
+         threads: 4,
+        ),
     );
 
     return result.text.trim();

@@ -1,8 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../services/speech_service.dart';
+import '../services/phrase_matcher_service.dart';
 
 enum RecordingState { idle, recording, processing }
 
@@ -16,7 +18,10 @@ class TranslateScreen extends StatefulWidget {
 class _TranslateScreenState extends State<TranslateScreen> {
   final AudioRecorder _recorder = AudioRecorder();
   RecordingState _state = RecordingState.idle;
-  String? _lastFilePath;
+
+  String? _recognizedText;
+  String? _matchedSantali;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -28,7 +33,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
     if (_state == RecordingState.idle) {
       await _startRecording();
     } else if (_state == RecordingState.recording) {
-      await _stopRecording();
+      await _stopRecordingAndProcess();
     }
   }
 
@@ -50,33 +55,67 @@ class _TranslateScreenState extends State<TranslateScreen> {
     final filePath =
         '${dir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
 
-    await _recorder.start(
+        await _recorder.start(
       const RecordConfig(
-        encoder: AudioEncoder.pcm16bits,
+        encoder: AudioEncoder.wav,
         sampleRate: 16000,
         numChannels: 1,
       ),
       path: filePath,
     );
-
     setState(() {
       _state = RecordingState.recording;
+      _recognizedText = null;
+      _matchedSantali = null;
+      _errorMessage = null;
     });
   }
 
-  Future<void> _stopRecording() async {
+  Future<void> _stopRecordingAndProcess() async {
     setState(() {
       _state = RecordingState.processing;
     });
 
     final path = await _recorder.stop();
-    _lastFilePath = path;
+
+    if (path == null) {
+      setState(() {
+        _state = RecordingState.idle;
+        _errorMessage = 'Recording failed — no file was saved.';
+      });
+      return;
+    }
 
     debugPrint('✅ Recording saved to: $path');
 
-    setState(() {
-      _state = RecordingState.idle;
-    });
+    try {
+      // Step 1: speech -> Hindi text
+      final text = await SpeechService.instance.transcribeFile(path);
+      debugPrint('🗣️ Recognized text: "$text"');
+
+      // Step 2: Hindi text -> matched phrase
+      final match = await PhraseMatcherService.instance.findBestMatch(text);
+
+      setState(() {
+        _recognizedText = text;
+        _matchedSantali = match?.santaliPhrase;
+        _errorMessage = match == null ? 'No matching phrase found.' : null;
+        _state = RecordingState.idle;
+      });
+
+      if (match != null) {
+        // Day 2 audio doesn't exist yet — print instead of playing sound.
+        debugPrint('✅ Matched phrase -> Santali: "${match.santaliPhrase}"');
+      } else {
+        debugPrint('❌ No confident match found for: "$text"');
+      }
+    } catch (e) {
+      debugPrint('❌ Pipeline error: $e');
+      setState(() {
+        _state = RecordingState.idle;
+        _errorMessage = 'Something went wrong: $e';
+      });
+    }
   }
 
   IconData get _micIcon {
@@ -106,26 +145,50 @@ class _TranslateScreenState extends State<TranslateScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Translate')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              iconSize: 80,
-              icon: Icon(_micIcon),
-              color: _state == RecordingState.recording ? Colors.red : null,
-              onPressed:
-                  _state == RecordingState.processing ? null : _handleMicTap,
-            ),
-            const SizedBox(height: 16),
-            Text(_statusText),
-            if (_lastFilePath != null) ...[
-              const SizedBox(height: 24),
-              Text(
-                'Last saved: ${_lastFilePath!.split('/').last}',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                iconSize: 80,
+                icon: Icon(_micIcon),
+                color: _state == RecordingState.recording ? Colors.red : null,
+                onPressed:
+                    _state == RecordingState.processing ? null : _handleMicTap,
               ),
+              const SizedBox(height: 16),
+              Text(_statusText),
+              if (_recognizedText != null) ...[
+                const SizedBox(height: 24),
+                Text(
+                  'Heard (Hindi): $_recognizedText',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+              if (_matchedSantali != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Matched (Santali): $_matchedSantali',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.orange),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
