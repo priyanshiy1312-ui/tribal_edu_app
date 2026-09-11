@@ -13,7 +13,7 @@ class SpeechService {
     if (_isModelLoaded) return;
 
     _whisper = await FlutterWhisper.loadModel(
-      model: WhisperModels.baseQ5_1,
+      model: WhisperModels.base,
       onDownloadProgress: (progress) {
         debugPrint('Whisper model download progress: $progress');
       },
