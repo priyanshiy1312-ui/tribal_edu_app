@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_whisper_ggml/flutter_whisper.dart';
 
 class SpeechService {
@@ -7,23 +6,25 @@ class SpeechService {
 
   FlutterWhisper? _whisper;
   bool _isModelLoaded = false;
+
   bool get isModelLoaded => _isModelLoaded;
 
   Future<void> loadModel() async {
     if (_isModelLoaded) return;
 
     _whisper = await FlutterWhisper.loadModel(
-      model: WhisperModels.baseQ5_1,
+      model: WhisperModels.base,
+      config: const WhisperModelConfig(useGpu: false),
       onDownloadProgress: (progress) {
-        debugPrint('Whisper model download progress: $progress');
+        print('Whisper model download: $progress');
       },
       onModelProgress: (progress) {
-        debugPrint('Whisper model loading: $progress%');
+        print('Whisper model loading: $progress%');
       },
     );
 
     _isModelLoaded = true;
-    debugPrint('✅ Whisper base model loaded and ready');
+    print('✅ Whisper base model loaded and ready');
   }
 
   Future<String> transcribeFile(String audioFilePath) async {
