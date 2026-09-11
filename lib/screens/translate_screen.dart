@@ -166,7 +166,7 @@ debugPrint('📁 File exists: $exists, size: $size bytes');
         score: result?.score ?? 0.0,
         isMatch: result?.isMatch ?? false,
       );
-
+final logs = await DatabaseService.instance.getMatchLogs(); debugPrint('📝 Total logged attempts: ${logs.length}');
       final matched = (result != null && result.isMatch) ? result.phrase : null;
 
       setState(() {
