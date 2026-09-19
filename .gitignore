@@ -46,3 +46,7 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+flutter_*log*.txt
+
+tribal_edu_app.db

@@ -1,41 +1,30 @@
-# Model & Architecture Selection Report — BhashaMitra
+# Model Selection Report — BhashaMitra
 
-This document explains two deliberate engineering decisions made during development, and why each was chosen over the alternative.
-
----
-
-## 1. Whisper Base Model, Chosen Over Tiny / Larger Variants
-
-BhashaMitra runs Whisper fully on-device (via `flutter_whisper_ggml`) to keep the classroom experience offline. This forces a real accuracy-vs-speed tradeoff, since the model has to run on standard classroom tablet hardware, not a server GPU.
-
-We evaluated the three practical options:
-
-- **Whisper tiny** — fastest, lowest memory footprint, but noticeably worse transcription accuracy on natural, sometimes noisy classroom speech. Given that our downstream fuzzy-matching step already has to tolerate phrasing variation, adding ASR-level noise on top of that risked compounding errors and pushing match accuracy down further.
-- **Whisper base** *(chosen)* — a meaningfully better accuracy/latency balance for on-device inference. It still runs within an acceptable time budget on the target hardware while producing noticeably cleaner Hindi transcriptions than tiny.
-- **Whisper small/medium/large** — better accuracy in principle, but the on-device inference time and memory requirements were not viable for a low-cost classroom tablet running fully offline. These were ruled out early as impractical for this deployment target, not tested to completion.
-
-**TODO (Person 3):** If Person 2 has formal benchmark numbers (accuracy %, transcription latency in seconds per model, tested on the actual target device), insert them here as a small table. If no formal benchmark exists, leave this section as the qualitative reasoning above — do not invent numbers.
-
-```
-| Model  | Approx. inference time | Transcription quality (qualitative) |
-|--------|------------------------|--------------------------------------|
-| tiny   | TODO                   | TODO                                  |
-| base   | TODO                   | TODO                                  |
-| small+ | Not viable on-device    | Not tested to completion              |
-```
-
-**Conclusion:** Whisper base was chosen as the best available balance of accuracy and on-device latency for the target classroom hardware, given that any further latency cost compounds into the already-above-target end-to-end pipeline time.
+This document explains two deliberate engineering decisions behind BhashaMitra's architecture: the choice of Whisper model size, and the choice of closed-set phrase matching over open-domain translation.
 
 ---
 
-## 2. Closed-Set Phrase Matching, Chosen Over Open-Domain NMT Translation
+## 1. Speech Recognition: Whisper `base` model
 
-Rather than attempting open-ended Hindi→Santali machine translation, BhashaMitra matches recognized speech against a fixed, curated set of 56 classroom phrases. This was a deliberate scope decision, not a fallback for a missing feature:
+BhashaMitra uses OpenAI's Whisper model, running fully on-device via `flutter_whisper_ggml`, to transcribe the teacher's spoken Hindi.
 
-1. **Latency and reliability on real classroom hardware.** Closed-set matching against a small, indexed phrase list is fast and deterministic. Open-domain NMT — especially for a low-resource language pair — would add unpredictable inference cost and failure modes to a pipeline that is already above its latency target.
+**Why `base`, not `tiny` or a larger model:**
 
-2. **Santali is a low-resource language for NMT.** High-quality Hindi↔Santali translation models are not mature, and there was no reliable way to QA open-domain translation output for correctness within the sprint timeframe. Shipping unreliable, unreviewable translations in a live classroom is a worse outcome than a smaller, correct, verified phrase set.
+- We directly compared `tiny` and `base` on-device during development. **`tiny` was faster, but its Hindi transcription accuracy was noticeably worse** — it missed and misrecognized more words than `base` did in our hands-on testing. Given that transcription accuracy directly determines whether the downstream phrase matcher can succeed at all, this made `tiny` a poor fit despite its speed advantage: a faster but wrong transcription is worse than a slightly slower correct one, since the matcher has no way to recover from bad input text.
+- **Larger models** (`small`, `medium`, and above) would likely improve accuracy further, but at a real cost: longer load times, higher memory usage, and slower inference — all of which matter on the kind of budget Android tablets this project targets for real classroom deployment (not high-end devices). Given our current end-to-end latency is already a known area for improvement, a larger model would make that worse, not better; we did not test these larger sizes given this tradeoff.
+- **`base`** was chosen as the practical middle point based on this comparison: meaningfully better Hindi transcription accuracy than `tiny`, while staying light enough to run acceptably on-device without cloud infrastructure — which is a hard requirement for the offline classroom use case, not a nice-to-have.
 
-3. **The actual use case doesn't need open-ended translation.** PALASH's classroom instructional vocabulary is itself largely fixed — a small set of recurring instructions ("sit down," "open your books," "line up," etc.). A closed, curated, human-verified phrase set covers the real target use case directly, without the risk profile of general-purpose translation.
+This is a defensible tradeoff for the target hardware and offline constraint, not an arbitrary default.
 
-**Conclusion:** Closed-set matching trades unbounded vocabulary coverage for guaranteed correctness and predictable latency — the right tradeoff for a live classroom tool serving young students in a low-resource language, within a hackathon sprint timeframe. Open-domain NMT is flagged as explicit future work (see README §10) once the vocabulary and QA process can support it.
+## 2. Translation Approach: Closed-set phrase matching, not open-domain NMT
+
+BhashaMitra does **not** perform open-ended machine translation of arbitrary Hindi sentences into Santali. Instead, it matches recognized speech against a fixed, curated list of 56 classroom phrases, each with a pre-translated Santali equivalent.
+
+**Why this, deliberately, rather than open-domain NMT:**
+
+- **Guaranteed offline reliability.** Every phrase's Santali translation and audio is prepared ahead of time, during an online SYNC phase. The live classroom experience never depends on a translation model running correctly in real time — it only needs to match text against a known list and play back audio that's already sitting on the device. This removes an entire class of failure modes (model errors, unexpected output, translation quality varying by sentence) from the part of the system a teacher actually depends on mid-lesson.
+- **Santali is a low-resource language for machine translation.** Reliable, high-quality Hindi-to-Santali NMT is not a solved problem the way major-language pairs are. Deploying open-domain translation for a real classroom tool, without the ability to properly validate translation quality across arbitrary sentences in the time available, would risk delivering incorrect or nonsensical Santali to students — a worse outcome than a narrower but reliable tool.
+- **The PALASH curriculum use case is naturally bounded.** Classroom instruction language (sit down, open your notebook, listen carefully, etc.) is repetitive and predictable. A curated, growable phrase list directly matches how the tool is actually used, rather than solving a more general problem the use case doesn't require.
+- **Latency and predictability.** Fuzzy-matching against a local list is fast and has bounded, predictable performance. An NMT model's inference time and output quality both vary more unpredictably, which matters for a tool meant to be used continuously through a live lesson.
+
+This tradeoff was made consciously, not because NMT access wasn't attempted — see the README's Bhashini Integration section for how the team pursued additional API access during this sprint, including specifically for Santali. Open-domain NMT support remains a natural direction for future work once translation quality for Santali can be properly validated.

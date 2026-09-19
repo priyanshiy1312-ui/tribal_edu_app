@@ -1,122 +1,93 @@
-# BhashaMitra – Sahyog
+# BhashaMitra - Sahyog
 
-*Real-time Hindi→Santali classroom bridge, built for Jharkhand's PALASH programme.*
+**Offline Hindi-to-Santali classroom translation for Jharkhand's PALASH programme.**
 
-<!-- Add team/project logo here: ![BhashaMitra Logo](assets/logo.png) -->
+SIH26042 | Smart India Hackathon | Government of Jharkhand
 
 ---
 
-## 1. Problem Statement
+## Problem Statement
 
-Jharkhand's PALASH programme aims to deliver primary education in students' mother tongues, but most teachers posted in tribal-belt schools speak Hindi and do not know Santali (Ol Chiki script). Existing translation tools assume internet connectivity and general-purpose translation quality — neither of which is reliable in the rural classrooms where this gap matters most. BhashaMitra – Sahyog lets a Hindi-speaking teacher deliver a fixed set of core classroom instructions in Santali, entirely offline, with a single tap.
+Jharkhand's PALASH programme places Hindi-speaking teachers in classrooms where students speak Santali, a tribal language written in the Ol Chiki script. Teachers have no way to bridge this language gap in real time — especially in classrooms with no reliable internet access.
 
-## 2. Solution Overview
+## Solution Overview
 
-BhashaMitra works in two phases:
+BhashaMitra uses a two-phase architecture designed specifically for **offline, real-time classroom use**:
 
-- **Phase 1 – SYNC (done ahead of time, online):** A curated set of 56 fixed classroom phrases (e.g. "sit down", "open your books", "line up") is translated from Hindi to Santali — both text and audio — using the Bhashini API, and cached locally on the tablet.
-- **Phase 2 – CLASSROOM (fully offline):** The teacher speaks the Hindi phrase naturally. An on-device Whisper model transcribes it, the transcription is fuzzy-matched against the 56 cached phrases, and the matched phrase's pre-generated Santali audio plays back instantly through the classroom speaker — no internet required.
+- **Phase 1 — SYNC** (ahead of time, when internet is available): a fixed set of 56 common classroom phrases are translated from Hindi to Santali and their audio is cached locally on the tablet.
+- **Phase 2 — CLASSROOM** (fully offline): the teacher speaks a Hindi instruction, an on-device Whisper model transcribes it, the recognized text is fuzzy-matched against the 56 cached phrases, and the matched phrase's Santali audio plays back — no internet required, no round-trip delay to a server.
 
-This split is deliberate: it moves all the unreliable, connectivity-dependent work (translation quality, API calls) to before the school day starts, so the classroom experience itself is fast, predictable, and offline-first.
-
-## 3. Key Features
-
-- **Offline-first classroom mode** — zero connectivity required once phrases are synced
-- **On-device ASR** — Whisper (base model) runs locally, no audio leaves the device
-- **Fuzzy phrase matching** — handles natural variation in how a teacher phrases a request
-- **Bluetooth speaker classroom scaling** — one tablet + one shared Bluetooth speaker serves the whole room, no per-student hardware
-- **Bhashini TTS integration** — real Santali audio generation for the phrase set
-- **Match analytics logging** — every match attempt (recognized text, matched phrase, confidence score, hit/miss) is logged locally for later review
-
-## 4. Tech Stack
-
-| Layer | Technology |
-|---|---|
-| App framework | Flutter (Dart), 3.47.2-stable |
-| Local database | sqflite (`phrases` + `match_logs` tables) |
-| CSV parsing | csv ^6.0.0 |
-| File paths | path, path_provider |
-| Fuzzy matching | string_similarity ^2.2.0 |
-| On-device ASR | flutter_whisper_ggml ^0.0.2 (Whisper base model) |
-| Audio recording | record ^7.1.1 (WAV, 16kHz, mono) |
-| Permissions | permission_handler ^13.0.2 |
-| Audio playback | audioplayers ^6.8.1 |
-| Santali TTS | Bhashini API |
-
-## 5. Architecture / How It Works
+This is a deliberate **closed-set matching** design, not open-domain translation — see [`MODEL_SELECTION_REPORT.md`](./MODEL_SELECTION_REPORT.md) for why.
 
 ```
 Teacher taps mic
-   │
-   ▼
-Records Hindi speech (auto-stop after ~1.2s silence, 8s hard cap)
-   │
-   ▼
-Whisper (on-device, base model) → transcribes to Hindi text
-   │
-   ▼
-PhraseMatcherService fuzzy-matches text against 56 phrases in SQLite
-   (string_similarity, confidence threshold ~0.45)
-   │
-   ├── Match found ──► AudioService plays cached Santali audio
-   │                    (assets/audio/<phrase.id>.aac)
-   │                    → routed through paired Bluetooth speaker
-   │
-   └── No match ─────► UI signals no match, teacher can retry
-   │
-   ▼
-UI displays recognized Hindi text + matched Santali text
-   │
-   ▼
-Match attempt logged to match_logs (text, phrase, score, hit/miss)
+  → records Hindi speech (auto-stops on ~1.2s silence)
+  → on-device Whisper (base model) transcribes to Hindi text
+  → fuzzy-matched against 56 cached phrases (confidence threshold ~0.45)
+  → matched phrase's cached Santali audio plays back
+  → recognized Hindi + matched Santali text shown on screen
 ```
 
-**Classroom deployment:** a single tablet paired with a shared Bluetooth speaker at the OS level — no app-level changes needed, since `audioplayers` routes through whatever output device is active. This keeps hardware cost to one tablet + one speaker per classroom, rather than per-student devices.
+## Key Features
 
-## 6. Model Selection Rationale
+- **Fully offline classroom operation** — no internet needed once phrases are synced
+- **On-device speech recognition** — Whisper (base model) running locally, no server round-trip
+- **Resilient fuzzy phrase matching** — handles natural rephrasing (e.g. "aap khade ho" vs. "khade ho jao") via combined character-similarity and word-overlap scoring, not just exact matches
+- **Classroom-scale audio** — teacher's tablet pairs with a shared Bluetooth speaker at the OS level, so no per-student hardware is needed
+- **Match analytics logging** — every recognition attempt is logged locally for accuracy tracking and debugging
 
-See [MODEL_SELECTION_REPORT.md](./MODEL_SELECTION_REPORT.md) for the reasoning behind two deliberate engineering choices: using the Whisper **base** model over tiny/larger variants, and using **closed-set phrase matching** instead of open-domain NMT translation.
+## Tech Stack
 
-## 7. Current Status / Honest Metrics
+| Component | Technology |
+|---|---|
+| App framework | Flutter (Dart) |
+| Local database | `sqflite` |
+| Speech recognition | `flutter_whisper_ggml` (on-device Whisper, base model) |
+| Audio recording | `record` (WAV, 16kHz, mono) |
+| Audio playback | `audioplayers` |
+| Phrase matching | `string_similarity` + custom token-overlap scoring |
+| Phrase data | `csv` |
+| TTS (audio generation) | Bhashini API (see note below) |
 
-We're presenting real numbers, not aspirational ones — the gaps below are known, prioritized, and being actively worked on.
+## Current Status
 
-- **Latency:** ~6–12 seconds end-to-end (recording stop → transcription → match → playback), varying with phrase length and device load. This is above the problem statement's <3s target. Known optimization target — see Future Work.
-- **Phrase coverage:** 49 / 56 phrases loading correctly *(provisional — a known CSV-parsing bug was causing this; confirm with Person 2 closer to submission whether it's since been fixed)*.
-- **Audio coverage:** *(provisional — pending final count from Person 2 of how many phrases have real Bhashini-generated Santali audio vs. placeholder/missing)*.
-- **Match accuracy:** ~50% recognition success in testing *(provisional — Person 2 has been improving fuzzy-matching logic to handle phrasing variation, e.g. "khade ho jao" vs "aap khade ho"; confirm final number before submission)*.
+Honest, current numbers as of this build:
 
-## 8. Setup / How to Run
+- **Phrase set**: 56 curated classroom phrases (Hindi, romanized Hindi, Santali in Ol Chiki script)
+- **Translation source**: cross-checked against NCERT reference materials; not yet verified by a native Santali speaker — flagged here rather than overstated
+- **Audio coverage**: 14 of 56 phrases currently have real Santali audio bundled; remaining phrases are being filled in
+- **Match accuracy**: actively being measured and improved (a fuzzy-matching upgrade was made during this sprint to better handle natural phrasing variation); a clean benchmark will be published once audio coverage is complete
+- **Latency**: end-to-end pipeline (recording stop → transcription → match → playback) currently runs several seconds — above our real-time target, and the next optimization priority
 
-**Requirements:** Flutter 3.47.2-stable, a device or emulator with microphone access.
+## Bhashini API Integration
+
+We requested and received approved access to Bhashini's TTS and NMT services for this project, specifically to auto-generate the remaining Santali audio files.
+
+During integration, we found that our granted access is provisioned against AI4Bharat's Coqui-TTS models (covering 15 languages), which does not currently include Santali — even though Bhashini's own public service catalog separately lists Santali TTS support through other providers (IIT Madras's `Bhashini/IITM/TTS`, and Bodhan.AI's `bhashini/bodhan/indic-tts`). We verified this directly via the Bhashini pipeline API rather than assuming: querying for Santali TTS models returns no available service for our current grant.
+
+We've reached out to Bhashini to request access to these specific services. In the meantime, this gap doesn't block the core product, since our architecture pre-caches all audio during the offline SYNC phase — audio coverage will continue to grow as we add manually-sourced recordings and as broader Bhashini access becomes available.
+
+## Classroom Deployment Model
+
+BhashaMitra is designed for **one tablet per classroom**, paired with a shared, inexpensive Bluetooth speaker (paired at the Android OS level — no app changes required). This avoids the cost of per-student hardware while still making the translated audio audible to the whole class.
+
+## Setup & Running
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/priyanshiy1312-ui/tribal_edu_app.git
-cd tribal_edu_app
-
-# 2. Install dependencies
 flutter pub get
-
-# 3. Run on a connected device or emulator
 flutter run
 ```
 
-> Note: microphone permission is required at runtime for Phase 2 (classroom mode) to function. On first launch, grant mic access when prompted.
+Requires Flutter 3.47+ and an Android device/emulator (tested on API 28, x86_64).
 
-## 9. Team & Acknowledgments
+## Team
 
-Built for **Smart India Hackathon 2026**, problem statement **SIH26042**, on behalf of the **Government of Jharkhand's PALASH programme** for mother-tongue-based primary education.
+Team BhashaMitra — Smart India Hackathon, SIH26042, for the PALASH programme, Government of Jharkhand.
 
-<!-- TODO: add team name and member names/roles here -->
+## Future Work
 
-## 10. Future Work
-
-- **Open-domain NMT** — move beyond the fixed 56-phrase set toward general Hindi↔Santali translation, once low-resource NMT quality for Santali can be reliably QA'd
-- **Expanding the phrase set** — grow beyond 56 phrases as the PALASH curriculum's instructional vocabulary grows
-- **Latency optimization** — closing the gap from ~6-12s toward the <3s target (model quantization, streaming transcription, warm-start optimizations)
-- **Multi-language support** — extending the same SYNC/CLASSROOM architecture to other tribal languages beyond Santali
-
----
-
-*BhashaMitra is deliberately scoped as a closed-set, offline-first tool. It does not include login/auth, LAN broadcast, or multi-device sync in this version — these were conscious scope cuts to keep the classroom experience fast and reliable within the sprint timeframe.*
+- Full Bhashini TTS integration once Santali-supporting services are accessible
+- Native-speaker verification of all Santali translations
+- Open-domain NMT support for phrases beyond the curated 56, once translation resources allow
+- Latency optimization (profiling which pipeline stage dominates end-to-end time)
+- Expanded phrase coverage for broader classroom scenarios
