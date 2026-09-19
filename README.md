@@ -67,6 +67,8 @@ During integration, we found that our granted access is provisioned against AI4B
 
 We've reached out to Bhashini to request access to these specific services. In the meantime, this gap doesn't block the core product, since our architecture pre-caches all audio during the offline SYNC phase — audio coverage will continue to grow as we add manually-sourced recordings and as broader Bhashini access becomes available.
 
+Supporting evidence (approval confirmation and follow-up correspondence) is available in [`docs/bhashini-evidence/`](./docs/bhashini-evidence/).
+
 ## Classroom Deployment Model
 
 BhashaMitra is designed for **one tablet per classroom**, paired with a shared, inexpensive Bluetooth speaker (paired at the Android OS level — no app changes required). This avoids the cost of per-student hardware while still making the translated audio audible to the whole class.
