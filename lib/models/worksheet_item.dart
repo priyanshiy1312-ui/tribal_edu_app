@@ -1,22 +1,18 @@
+/// One piece of bilingual worksheet content — a simple, self-contained
+/// unit a teacher can read or hand out. Hardcoded for Day 6; not tied
+/// to the live phrase database.
 class WorksheetItem {
-  final String id;
-  final String topic;
+  final String title;
   final String hindiText;
+  final String hindiRomanized;
   final String santaliText;
+  final String category;
 
-  WorksheetItem({
-    required this.id,
-    required this.topic,
+  const WorksheetItem({
+    required this.title,
     required this.hindiText,
+    required this.hindiRomanized,
     required this.santaliText,
+    required this.category,
   });
-
-  factory WorksheetItem.fromJson(Map<String, dynamic> json) {
-    return WorksheetItem(
-      id: json['id'] as String,
-      topic: json['topic'] as String,
-      hindiText: json['hindi_text'] as String,
-      santaliText: json['santali_text'] as String,
-    );
-  }
 }
