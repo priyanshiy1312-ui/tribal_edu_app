@@ -24,6 +24,7 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: AppColors.navy,
+        surfaceTintColor: Colors.transparent,
         elevation: 2,
         shadowColor: Colors.black26,
         centerTitle: false,
@@ -50,3 +51,4 @@ class AppTheme {
     );
   }
 }
+

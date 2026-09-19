@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../services/database_service.dart';
 
@@ -34,7 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
+             backgroundColor: Colors.transparent,
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _logsFuture,
         builder: (context, snapshot) {

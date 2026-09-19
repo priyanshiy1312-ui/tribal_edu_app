@@ -216,7 +216,7 @@ final logs = await DatabaseService.instance.getMatchLogs(); debugPrint('📝 Tot
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Translate')),
+               backgroundColor: Colors.transparent,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

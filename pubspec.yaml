@@ -76,7 +76,7 @@ flutter:
     - assets/audio/
     - assets/images/logo.jpeg
     - assets/images/background.jpeg
-
+    - assets/images/sahyog.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

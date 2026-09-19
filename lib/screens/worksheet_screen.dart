@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../models/worksheet_item.dart';
 
@@ -58,7 +58,7 @@ class WorksheetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Worksheet')),
+         backgroundColor: Colors.transparent,
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: _items.length,
