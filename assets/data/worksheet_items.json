@@ -1,0 +1,20 @@
+[
+  {
+    "id": "w1",
+    "topic": "Counting 1-10",
+    "hindi_text": "एक, दो, तीन, चार, पांच, छह, सात, आठ, नौ, दस",
+    "santali_text": "REPLACE_WITH_SANTALI_TRANSLATION"
+  },
+  {
+    "id": "w2",
+    "topic": "Days of the week",
+    "hindi_text": "सोमवार, मंगलवार, बुधवार, गुरुवार, शुक्रवार, शनिवार, रविवार",
+    "santali_text": "REPLACE_WITH_SANTALI_TRANSLATION"
+  },
+  {
+    "id": "w3",
+    "topic": "Common classroom words",
+    "hindi_text": "बैठिए, अपनी किताब खोलिए, मेरे बाद दोहराइए",
+    "santali_text": "REPLACE_WITH_SANTALI_TRANSLATION"
+  }
+]
