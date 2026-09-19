@@ -1,26 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
-import 'screens/home_shell.dart';
-import 'services/database_service.dart';
-import 'services/speech_service.dart';
+import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    await SpeechService.instance.loadModel();
-  } catch (e) {
-    debugPrint('Failed to load Whisper model: $e');
-  }
-
-  try {
-    final count = await DatabaseService.instance.loadPhrasesFromCsv();
-    debugPrint('Loaded $count phrases into database');
-  } catch (e) {
-    debugPrint('Failed to load phrases: $e');
-  }
-
   runApp(const MyApp());
 }
 
@@ -33,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'BhashaMitra',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: const HomeShell(),
+      home: const SplashScreen(),
     );
   }
 }
