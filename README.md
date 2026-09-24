@@ -55,7 +55,7 @@ Honest, current numbers as of this build:
 
 - **Phrase set**: 56 curated classroom phrases (Hindi, romanized Hindi, Santali in Ol Chiki script)
 - **Translation source**: cross-checked against NCERT reference materials; not yet verified by a native Santali speaker — flagged here rather than overstated
-- **Audio coverage**: 14 of 56 phrases currently have real Santali audio bundled; remaining phrases are being filled in
+- **Audio coverage**: 22 of 56 phrases currently have real Santali audio bundled; remaining phrases are being filled in
 - **Match accuracy**: actively being measured and improved (a fuzzy-matching upgrade was made during this sprint to better handle natural phrasing variation); a clean benchmark will be published once audio coverage is complete
 - **Latency**: end-to-end pipeline (recording stop → transcription → match → playback) currently runs several seconds — above our real-time target, and the next optimization priority
 
