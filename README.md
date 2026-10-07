@@ -1,4 +1,4 @@
-# BhashaMitra - Sahyog
+# BhashaMitra - Sahyog (An offline application)
 
 **Offline Hindi-to-Santali classroom translation for Jharkhand's PALASH programme.**
 
